@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow-sm mx-auto p-4" style="max-width: 650px;">
+        <h1 class="h3 mb-4">Submit a Support Ticket</h1>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="subject" class="form-label">Subject</label>
+                <input
+                    type="text"
+                    name="subject"
+                    id="subject"
+                    class="form-control"
+                    maxlength="200"
+                    required
+                >
+            </div>
+
+            <div class="mb-3">
+                <label for="description " class="form-label">
+                    Describe your issue
+                </label>
+                <textarea
+                    name="description"
+                    id="description"
+                    class="form-control"
+                    rows="5"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button
+                    type="submit"
+                    name="action"
+                    value="submit_ticket"
+                    class="btn btn-primary"
+                >
+                    Submit Ticket
+                </button>
+
+                <button
+                    type="submit"
+                    name="action"
+                    value="ai_suggestion"
+                    class="btn btn-secondary"
+                >
+                    Get AI Suggestion
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
