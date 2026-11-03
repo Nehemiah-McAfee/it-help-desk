@@ -22,7 +22,7 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
 
-            <a class="navbar-brand" href="{% url 'login' %}">
+            <a class="navbar-brand" href="{% url 'home' %}">
                 Help Desk
             </a>
 
@@ -40,16 +40,27 @@
 
             <div class="collapse navbar-collapse" id="navbarContent">
                 <ul class="navbar-nav me-auto">
+                    {% if request.user.is_authenticated and request.user.is_staff %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'submit_ticket' %}">
-                            Ticket View
+                        <a class="nav-link" href="{% url 'ticket_list' %}">
+                            Staff Ticket View
                         </a>
                     </li>
+                    {% endif %}
+                    {% if request.user.is_authenticated and not request.user.is_staff %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'my_tickets' %}">
+                            My Tickets
+                        </a>
+                    </li>
+                    {% endif %}
+                    {% if request.user.is_authenticated and not request.user.is_staff %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'submit_ticket' %}">
                             Submit Issue
                         </a>
                     </li>
+                    {% endif %}
                 </ul>
 
                 <form method="post" action="{% url 'logout' %}">

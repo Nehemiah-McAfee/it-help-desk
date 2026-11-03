@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Ticket #{{ ticket.id }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-1">Ticket #{{ ticket.id }}</h1>
+            <p class="text-muted mb-0">Submitted by {{ ticket.created_by.username }}</p>
+        </div>
+        <div class="d-flex gap-2">
+            {% if request.user.is_staff and ticket.is_open %}
+                <form method="post" action="{% url 'close_ticket' ticket_id=ticket.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Close Ticket</button>
+                </form>
+            {% elif request.user.is_staff %}
+                <form method="post" action="{% url 'reopen_ticket' ticket_id=ticket.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-warning">Reopen Ticket</button>
+                </form>
+            {% elif ticket.is_open %}
+                <form method="post" action="{% url 'solve_ticket' ticket_id=ticket.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Mark Solved</button>
+                </form>
+            {% endif %}
+            {% if request.user.is_staff %}
+                <a href="{% url 'ticket_list' %}" class="btn btn-outline-secondary">Back to Ticket View</a>
+            {% else %}
+                <a href="{% url 'my_tickets' %}" class="btn btn-outline-secondary">Back to My Tickets</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="h4 mb-0">{{ ticket.subject }}</h2>
+                <span class="badge {% if ticket.is_open %}bg-success{% else %}bg-secondary{% endif %}">
+                    {% if ticket.is_open %}Open{% else %}Closed{% endif %}
+                </span>
+            </div>
+            <p class="text-muted mb-3">{{ ticket.created_at|date:"M d, Y g:i A" }}</p>
+            <p class="mb-0">{{ ticket.description }}</p>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h3 class="h5 mb-3">Replies</h3>
+
+            {% if replies %}
+                {% for reply in replies %}
+                    <div class="border rounded p-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong>{{ reply.created_by.username }}</strong>
+                            <small class="text-muted">{{ reply.created_at|date:"M d, Y g:i A" }}</small>
+                        </div>
+                        <p class="mb-0">{{ reply.message }}</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted mb-0">No replies have been added yet.</p>
+            {% endif %}
+
+            {% if ticket.is_open %}
+                <hr>
+                <h4 class="h6 mb-3">Add a reply</h4>
+                {% if error %}
+                    <div class="alert alert-danger" role="alert">{{ error }}</div>
+                {% endif %}
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Your reply</label>
+                        <textarea
+                            name="message"
+                            id="message"
+                            class="form-control"
+                            rows="4"
+                            required
+                        >{{ reply_message }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Reply</button>
+                </form>
+            {% else %}
+                <hr>
+                {% if error %}
+                    <div class="alert alert-danger" role="alert">{{ error }}</div>
+                {% endif %}
+                <p class="text-muted mb-0">This ticket is closed. Replies are disabled.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

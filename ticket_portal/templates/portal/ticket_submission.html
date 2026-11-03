@@ -5,6 +5,14 @@
     <div class="card shadow-sm mx-auto p-4" style="max-width: 650px;">
         <h1 class="h3 mb-4">Submit a Support Ticket</h1>
 
+        {% if error %}
+            <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+
+        {% if success %}
+            <div class="alert alert-success">{{ success }}</div>
+        {% endif %}
+
         <form method="post">
             {% csrf_token %}
 
